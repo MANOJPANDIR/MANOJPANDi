@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="quizApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz App</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .options li {
+            margin-bottom: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .options li:hover {
+            background-color: #f0f0f0;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body ng-controller="QuizController as quizCtrl">
+    <div class="container">
+        <h1>Interactive Quiz</h1>
+        <div class="question" ng-show="quizCtrl.quizStarted && !quizCtrl.quizFinished">
+            <p>{{ quizCtrl.currentQuestion.question }}</p>
+            <ul class="options">
+                <li ng-repeat="option in quizCtrl.currentQuestion.options" ng-click="quizCtrl.answerQuestion(option)">
+                    {{ option }}
+                </li>
+            </ul>
+            <button ng-click="quizCtrl.nextQuestion()" ng-show="quizCtrl.selectedOption || quizCtrl.isAnswerCorrect">Next</button>
+        </div>
+
+        <div class="result" ng-show="quizCtrl.quizFinished">
+            <p>Your Score: {{ quizCtrl.score }} / {{ quizCtrl.totalQuestions }}</p>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        angular.module('quizApp', [])
+            .controller('QuizController', function() {
+                var vm = this;
+
+                vm.quizStarted = false;
+                vm.quizFinished = false;
+                vm.currentQuestionIndex = 0;
+                vm.score = 0;
+
+                vm.questions = [
+                    {
+                        question: 'What is the capital of France?',
+                        options: ['Paris', 'London', 'Berlin', 'Madrid'],
+                        correctAnswer: 'Paris'
+                    },
+                ];
+
+                vm.currentQuestion = vm.questions[vm.currentQuestionIndex];
+
+                vm.answerQuestion = function(selectedOption) {
+                    vm.selectedOption = selectedOption;
+                    vm.isAnswerCorrect = (selectedOption === vm.currentQuestion.correctAnswer);
+                };
+
+                vm.nextQuestion = function() {
+                    if (vm.isAnswerCorrect) {
+                        vm.score++;
+                    }
+
+                    vm.selectedOption = null;
+                    vm.isAnswerCorrect = false;
+
+                    if (vm.currentQuestionIndex < vm.questions.length - 1) {
+                        vm.currentQuestionIndex++;
+                        vm.currentQuestion = vm.questions[vm.currentQuestionIndex];
+                    } else {
+                        vm.quizFinished = true;
+                    }
+                };
+            });
+    </script>
+</body>
+</html>

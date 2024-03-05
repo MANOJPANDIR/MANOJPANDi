@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="eventCalendarApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Event Calendar</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .day {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body ng-controller="EventCalendarController as calendarCtrl">
+    <div class="container">
+        <h1>Event Calendar</h1>
+        <div class="calendar">
+            <div class="day" ng-repeat="day in calendarCtrl.days">
+                {{ day }}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        angular.module('eventCalendarApp', [])
+            .controller('EventCalendarController', function() {
+                var vm = this;
+                vm.days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            });
+    </script>
+</body>
+</html>
