@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="todoApp">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Todo List App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .todo-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .todo-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 5px 0;
+      transition: background-color 0.3s;
+    }
+
+    .todo-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .remove-btn {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .add-remove-animation.ng-enter,
+    .add-remove-animation.ng-leave {
+      transition: all 0.5s ease-in-out;
+      opacity: 0;
+      max-height: 0;
+    }
+
+    .add-remove-animation.ng-enter-stagger,
+    .add-remove-animation.ng-leave-stagger {
+      transition-delay: 0.1s;
+    }
+  </style>
+</head>
+
+<body ng-controller="TodoController as ctrl">
+  <h2>Todo List</h2>
+  <ul class="todo-list">
+    <li class="todo-item" ng-repeat="task in ctrl.tasks" ng-class="{'add-remove-animation': true}">
+      {{task.name}}
+      <button class="remove-btn" ng-click="ctrl.removeTask($index)">Remove</button>
+    </li>
+  </ul>
+
+  <form ng-submit="ctrl.addTask()">
+    <label>Add Task:</label>
+    <input type="text" ng-model="ctrl.newTask" required>
+    <button type="submit">Add</button>
+  </form>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+  <script>
+    angular.module('todoApp', ['ngAnimate'])
+      .controller('TodoController', function ($scope) {
+        var vm = this;
+
+        vm.tasks = [
+          { name: 'Task 1' },
+          { name: 'Task 2' },
+          { name: 'Task 3' }
+        ];
+
+        vm.addTask = function () {
+          if (vm.newTask) {
+            vm.tasks.push({ name: vm.newTask });
+            vm.newTask = '';
+          }
+        };
+
+        vm.removeTask = function (index) {
+          vm.tasks.splice(index, 1);
+        };
+      });
+  </script>
+</body>
+
+</html>
