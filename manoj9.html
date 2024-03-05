@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="chatApp">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Real-time Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    #chat-box {
+      border: 1px solid #ddd;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: scroll;
+    }
+
+    #message-input {
+      margin-top: 10px;
+    }
+
+    #message-input input {
+      width: 70%;
+      padding: 8px;
+      margin-right: 10px;
+    }
+
+    #send-btn {
+      padding: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body ng-controller="ChatController as ctrl">
+  <h2>Real-time Chat</h2>
+  <div id="chat-box">
+    <div ng-repeat="message in ctrl.messages">
+      {{message}}
+    </div>
+  </div>
+
+  <div id="message-input">
+    <input ng-model="ctrl.newMessage" placeholder="Type your message..." />
+    <button id="send-btn" ng-click="ctrl.sendMessage()">Send</button>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+  <script>
+    angular.module('chatApp', [])
+      .controller('ChatController', function ($scope) {
+        var vm = this;
+
+        vm.messages = [];
+        vm.newMessage = '';
+
+        var socket = io();
+
+        socket.on('chat message', function (message) {
+          $scope.$apply(function () {
+            vm.messages.push(message);
+          });
+          var chatBox = document.getElementById('chat-box');
+          chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        vm.sendMessage = function () {
+          if (vm.newMessage.trim() !== '') {
+            socket.emit('chat message', vm.newMessage);
+            vm.newMessage = '';
+          }
+        };
+      });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+    socket.on('chat message', function (message) {
+      appendMessage(message);
+    });
+
+    function appendMessage(message) {
+      var messageElement = document.createElement('div');
+      messageElement.textContent = message;
+      document.getElementById('chat-box').appendChild(messageElement);
+
+      var chatBox = document.getElementById('chat-box');
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+
+</html>
